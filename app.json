@@ -1,0 +1,16 @@
+{
+  "name": "MusicBox",
+  "description": "Django : MusicBox contains albums and user based Play Lists",
+  "scripts": {
+  },
+  "env": {
+  },
+  "formation": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+
+  ]
+}
