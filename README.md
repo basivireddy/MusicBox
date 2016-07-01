@@ -2,6 +2,14 @@
 
 Music Box is an application that let's you upload, store, and play all of your music from the cloud. You can now manage and listen to your music from any device, anywhere in the world.
 
+------
+
+## ScreenShot: ##
+
+![ScreenShot](https://raw.githubusercontent.com/basivireddy/MusicBox/master/MusicBox.PNG)
+
+-------
+
 ## Installation
 
 ### Create virtual environment and activate(optional)
@@ -25,6 +33,3 @@ Music Box is an application that let's you upload, store, and play all of your m
    python manage.py runserver 0.0.0.0:8000
 ```
 then browse ***http://your_server_ip:8000/music/***
-
-
-
