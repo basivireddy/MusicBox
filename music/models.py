@@ -19,3 +19,20 @@ class Song(models.Model):
 
     def __str__(self):
         return self.song_title
+
+
+class PlayList(models.Model):
+    playlist_title = models.CharField(max_length=100)
+    user = models.ForeignKey(User, default=1)
+
+    def __str__(self):
+        return self.playlist_title
+
+
+class PlayListSong(models.Model):
+    playlist = models.ForeignKey(PlayList, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.playlist) + ' - ' + str(self.song)
+
