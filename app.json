@@ -10,8 +10,6 @@
     }
   },
   "addons": [
-    "newrelic:stark",
-    "heroku-redis:hobby-dev"
   ],
   "scripts": {
     "postdeploy": "python manage.py migrate --noinput"
