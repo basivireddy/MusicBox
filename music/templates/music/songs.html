@@ -43,10 +43,10 @@
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'music:detail' song.album.id %}">
+                                        <a href="{% url 'music:album_detail' song.album.id %}">
                                             <img src="{{ song.album.album_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
                                         </a>
-                                        <a href="{% url 'music:detail' song.album.id %}">{{ song.album.album_title }}</a>
+                                        <a href="{% url 'music:album_detail' song.album.id %}">{{ song.album.album_title }}</a>
                                     </td>
                                     <td>
                                         <a href="{% url 'music:favorite' song.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if song.is_favorite %}active{% endif %}"></span></a>

@@ -3,7 +3,7 @@ from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .forms import AlbumForm, SongForm, UserForm, PlayListForm
+from .forms import AlbumForm, SongForm, UserForm, PlayListForm ,PlayListSongForm
 from .models import Album, Song, PlayList, PlayListSong
 
 AUDIO_FILE_TYPES = ['wav', 'mp3', 'ogg']
@@ -11,6 +11,9 @@ IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
 
 def create_album(request):
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
         form = AlbumForm(request.POST or None, request.FILES or None)
         if form.is_valid():
             album = form.save(commit=False)
@@ -25,7 +28,7 @@ def create_album(request):
                 }
                 return render(request, 'music/create_album.html', context)
             album.save()
-            return render(request, 'music/detail.html', {'album': album})
+            return render(request, 'music/album_detail.html', {'album': album})
         context = {
             "form": form,
         }
@@ -33,57 +36,67 @@ def create_album(request):
 
 
 def create_song(request, album_id):
-    form = SongForm(request.POST or None, request.FILES or None)
-    album = get_object_or_404(Album, pk=album_id)
-    if form.is_valid():
-        albums_songs = album.song_set.all()
-        for s in albums_songs:
-            if s.song_title == form.cleaned_data.get("song_title"):
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
+        form = SongForm(request.POST or None, request.FILES or None)
+        album = get_object_or_404(Album, pk=album_id)
+        if form.is_valid():
+            albums_songs = album.song_set.all()
+            for s in albums_songs:
+                if s.song_title == form.cleaned_data.get("song_title"):
+                    context = {
+                        'album': album,
+                        'form': form,
+                        'error_message': 'You already added that song',
+                    }
+                    return render(request, 'music/create_song.html', context)
+            song = form.save(commit=False)
+            song.album = album
+            song.audio_file = request.FILES['audio_file']
+            file_type = song.audio_file.url.split('.')[-1]
+            file_type = file_type.lower()
+            if file_type not in AUDIO_FILE_TYPES:
                 context = {
                     'album': album,
                     'form': form,
-                    'error_message': 'You already added that song',
+                    'error_message': 'Audio file must be WAV, MP3, or OGG',
                 }
                 return render(request, 'music/create_song.html', context)
-        song = form.save(commit=False)
-        song.album = album
-        song.audio_file = request.FILES['audio_file']
-        file_type = song.audio_file.url.split('.')[-1]
-        file_type = file_type.lower()
-        if file_type not in AUDIO_FILE_TYPES:
-            context = {
-                'album': album,
-                'form': form,
-                'error_message': 'Audio file must be WAV, MP3, or OGG',
-            }
-            return render(request, 'music/create_song.html', context)
 
-        song.save()
-        return render(request, 'music/detail.html', {'album': album})
-    context = {
-        'album': album,
-        'form': form,
-    }
-    return render(request, 'music/create_song.html', context)
+            song.save()
+            return render(request, 'music/album_detail.html', {'album': album})
+        context = {
+            'album': album,
+            'form': form,
+        }
+        return render(request, 'music/create_song.html', context)
 
 
 def delete_album(request, album_id):
-    album = Album.objects.get(pk=album_id)
-    album.delete()
-    albums = Album.objects.filter(user=request.user)
-    return render(request, 'music/index.html', {'albums': albums})
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
+        album = Album.objects.get(pk=album_id)
+        album.delete()
+        albums = Album.objects.all()
+        return render(request, 'music/index.html', {'albums': albums})
 
 
 def delete_song(request, album_id, song_id):
-    album = get_object_or_404(Album, pk=album_id)
-    song = Song.objects.get(pk=song_id)
-    song.delete()
-    return render(request, 'music/detail.html', {'album': album})
-
-
-def detail(request, album_id):
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
         album = get_object_or_404(Album, pk=album_id)
-        return render(request, 'music/detail.html', {'album': album})
+        song = Song.objects.get(pk=song_id)
+        song.delete()
+        album = get_object_or_404(Album, pk=album_id)
+        return render(request, 'music/album_detail.html', {'album': album})
+
+
+def album_detail(request, album_id):
+        album = get_object_or_404(Album, pk=album_id)
+        return render(request, 'music/album_detail.html', {'album': album})
 
 
 def favorite(request, song_id):
@@ -115,23 +128,23 @@ def favorite_album(request, album_id):
 
 
 def index(request):
-        albums = Album.objects.all()
-        song_results = Song.objects.all()
-        query = request.GET.get("q")
-        if query:
-            albums = albums.filter(
-                Q(album_title__icontains=query) |
-                Q(artist__icontains=query)
-            ).distinct()
-            song_results = song_results.filter(
-                Q(song_title__icontains=query)
-            ).distinct()
-            return render(request, 'music/index.html', {
-                'albums': albums,
-                'songs': song_results,
-            })
-        else:
-            return render(request, 'music/index.html', {'albums': albums})
+    albums = Album.objects.all()
+    song_results = Song.objects.all()
+    query = request.GET.get("q")
+    if query:
+        albums = albums.filter(
+            Q(album_title__icontains=query) |
+            Q(artist__icontains=query)
+        ).distinct()
+        song_results = song_results.filter(
+            Q(song_title__icontains=query)
+        ).distinct()
+        return render(request, 'music/index.html', {
+            'albums': albums,
+            'songs': song_results,
+        })
+
+    return render(request, 'music/index.html', {'albums': albums})
 
 
 def songs(request, filter_by):
@@ -179,23 +192,83 @@ def create_playlist(request):
 
 
 def delete_playlist(request, playlist_id):
-    playlist = PlayList.objects.get(pk=playlist_id)
-    playlist.delete()
-    playlists = PlayList.objects.filter(user=request.user)
-    return render(request, 'music/playlists.html', {'playlists': playlists})
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
+        playlist = PlayList.objects.get(pk=playlist_id)
+        playlist.delete()
+        playlists = PlayList.objects.filter(user=request.user)
+        return render(request, 'music/playlists.html', {'playlists': playlists})
 
 
 def playlist_detail(request,playlist_id):
     if not request.user.is_authenticated():
         return render(request, 'music/login.html')
     else:
+        playlist = get_object_or_404(PlayList, pk=playlist_id)
         song_ids = []
         for playlistsong in PlayListSong.objects.filter(playlist=PlayList.objects.filter(id=playlist_id)):
                 song_ids.append(playlistsong.song.id)
         songs = Song.objects.filter(pk__in=song_ids)
-        return render(request, 'music/playlist_detail.html', {'songs': songs})
+        return render(request, 'music/playlist_detail.html', {'songs': songs,'playlist':playlist})
 
 
+def add_song_playlist(request,album_id):
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
+        form = PlayListSongForm(request.POST or None, request.FILES or None)
+        album = get_object_or_404(Album, pk=album_id)
+        if form.is_valid():
+            playlistsong = form.save(commit=False)
+            playlistsong.save()
+            playlists = PlayList.objects.filter(user=request.user)
+            return render(request, 'music/album_detail.html', {'album': album})
+        else:
+            context = {
+                "form": form,
+            }
+            return render(request, 'music/add_song_playlist.html', context)
+
+def remove_song_playlist(request, playlist_id, song_id):
+    if not request.user.is_authenticated():
+        return render(request, 'music/login.html')
+    else:
+        playlistsong = PlayListSong.objects.get(song_id=song_id,playlist_id=playlist_id)
+        playlistsong.delete()
+        playlist = get_object_or_404(PlayList, pk=playlist_id)
+        song_ids = []
+        for playlistsong in PlayListSong.objects.filter(playlist=PlayList.objects.filter(id=playlist_id)):
+            song_ids.append(playlistsong.song.id)
+        songs = Song.objects.filter(pk__in=song_ids)
+        return render(request, 'music/playlist_detail.html', {'songs': songs,'playlist':playlist})
+
+'''
+def add_song_playlist(request,playlist_id,song_id):
+    form = PlayListSongForm(request.POST or None, request.FILES or None)
+    album = get_object_or_404(Album, pk=album_id)
+    if form.is_valid():
+        playlist_songs = PlayListSong.objects.filter(playlist=PlayList.objects.filter(id=playlist_id))
+        song = get_object_or_404(Song, pk=song_id)
+        playlist = get_object_or_404(PlayList, pk=playlist_id)
+        for s in playlist_songs:
+            playlist_song = get_object_or_404(Song, pk=s.song.id)
+            if song.song_title == playlist_song.song_title:
+                context = {
+                    'playlist':playlist ,
+                    'form': form,
+                    'error_message': 'You already added that song',
+                }
+                return render(request, 'music/album_detail.html', context)
+        playlistsong = form.save(commit=False)
+        playlistsong.save()
+        return render(request, 'music/album_detail.html', {'playlists': playlists})
+    else:
+        context = {
+            "form": form,
+        }
+        return render(request, 'music/_detail.html', context)
+'''
 def logout_user(request):
     logout(request)
     form = UserForm(request.POST or None)

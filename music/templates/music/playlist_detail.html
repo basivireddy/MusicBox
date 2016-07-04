@@ -1,5 +1,5 @@
 {% extends 'music/base.html' %}
-{% block title %}{{ album }}{% endblock %}
+{% block title %}{{ playlist.playlist_title }}{% endblock %}
 {% block playlists_active %}active{% endblock %}
 
 {% block body %}
@@ -11,7 +11,7 @@
         <div class="col-sm-4 col-md-3">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h1></h1>
+                    <h1><a href="{% url 'music:playlist_detail' playlist.id %}">{{ playlist.playlist_title }}</a></h1>
                 </div>
             </div>
         </div>
@@ -51,11 +51,11 @@
                                     <a href="{% url 'music:favorite' song.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if song.is_favorite %}active{% endif %}"></span></a>
                                 </td>
                                 <td>
-                                    <form action="{% url 'music:delete_song' album.id song.id %}" method="post" style="display: inline;">
+                                    <form action="{% url 'music:remove_song_playlist' playlist.id song.id%}" method="post" style="display: inline;">
                                         {% csrf_token %}
                                         <input type="hidden" name="song_id" value="{{ song.id }}" />
                                         <button type="submit" class="btn btn-danger btn-xs">
-                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Remove
                                         </button>
                                     </form>
                                 </td>

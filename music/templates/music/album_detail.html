@@ -11,7 +11,7 @@
         <div class="col-sm-4 col-md-3">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <a href="{% url 'music:detail' album.id %}">
+                    <a href="{% url 'music:album_detail' album.id %}">
                         {% if album.album_logo %}
                             <img src="{{ album.album_logo.url }}" class="img-responsive">
                         {% else %}
@@ -20,6 +20,7 @@
                     </a>
                     <h1>{{ album.album_title }} <small>{{ album.genre }}</small></h1>
                     <h2>{{ album.artist }}</h2>
+
                 </div>
             </div>
         </div>
@@ -28,7 +29,7 @@
         <div class="col-sm-8 col-md-9">
 
             <ul class="nav nav-pills" style="margin-bottom: 10px;">
-                <li role="presentation" class="active"><a href="{% url 'music:detail' album.id %}">View All</a></li>
+                <li role="presentation" class="active"><a href="{% url 'music:album_detail' album.id %}">View All</a></li>
                 <li role="presentation"><a href="{% url 'music:create_song' album.id %}">Add New Song</a></li>
             </ul>
 
@@ -73,6 +74,10 @@
                                         </button>
                                     </form>
                                 </td>
+                                <td>
+                                   <a href="{% url 'music:add_song_playlist' album.id %}">Add to PlayList</a>
+                                </td>
+
                             </tr>
                         {% endfor %}
                         </tbody>
