@@ -1,16 +1,19 @@
 {
-  "name": "MusicBox",
-  "description": "Django : MusicBox contains albums and user based Play Lists",
-  "scripts": {
-  },
+  "name": "heroku-django",
+  "description": "A simple project to get started with Django on Heroku",
+  "repository": "https://github.com/basivireddy/MusicBox",
+  "keywords": ["python", "django", "template", "skeleton"],
   "env": {
-  },
-  "formation": {
+    "DJANGO_SECRET_KEY": {
+      "description": "A randomly generated secret to secure your Django installation",
+      "generator": "secret"
+    }
   },
   "addons": [
-
+    "newrelic:stark",
+    "heroku-redis:hobby-dev"
   ],
-  "buildpacks": [
-
-  ]
+  "scripts": {
+    "postdeploy": "python manage.py migrate --noinput"
+  }
 }
