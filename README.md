@@ -25,7 +25,7 @@ Music Box is an application that let's you upload, store, and play all of your m
 
 ### Install  required packages
 ```
-   cd skull-rock
+   cd MusicBox
    pip install -r requirements.txt
 ```
 ### Run the server
