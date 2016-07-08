@@ -66,11 +66,12 @@ def create_song(request, album_id):
 
             song.save()
             return render(request, 'music/album_detail.html', {'album': album})
-        context = {
-            'album': album,
-            'form': form,
-        }
-        return render(request, 'music/create_song.html', context)
+        else:
+            context = {
+                'album': album,
+                'form': form,
+            }
+            return render(request, 'music/create_song.html', context)
 
 
 def delete_album(request, album_id):
