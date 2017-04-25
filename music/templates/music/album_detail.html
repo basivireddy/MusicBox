@@ -61,10 +61,34 @@
 
                         </tr>
                         </thead>
+
+                         <!-- Modal -->
+                                         <!--model -->
+                                         <div class="modal fade" id="myModal" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+
+                                          <!-- Modal content-->
+                                          <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                  <h4 class="modal-title">Lyric</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p id="lyricBody"></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+
+
                         <tbody>
                         {% for song in album.song_set.all %}
                             <tr>
-                                <td>{{ song.song_title }} <a href="{% url 'music:lyrics' song.id %}"> a </a></td>
+                                <td>{{ song.song_title }} </td>
                                 <td>
                                     <a target="_blank" href="{{ song.audio_file.url }}">
                                         <button type="button" class="btn btn-success btn-xs">
@@ -79,68 +103,36 @@
                                         </button>
                                     </a>
                                 </td>
-                                 <td>
+                                <td>
                                      <div class="container col-sm-4 col-md-3">
                                       <!-- Trigger the modal with a button -->
-                                      <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">Open Modal</button>
 
-                                      <!-- Modal -->
-                                      <div class="modal fade" id="myModal" role="dialog">
-                                        <div class="modal-dialog modal-lg">
 
-                                          <!-- Modal content-->
-                                          <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                  <h4 class="modal-title">Modal Header</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <p><a href="{% url 'music:lyrics' song.id %}"> a </a></p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                </div>
-                                          </div>
+                                      <button type="button" class="btn btn-success btn-xs lyrics" index="{% url 'music:lyrics' song.id %}">Lyrics</button>
+                                          {% block javascript %}
 
-                                        </div>
-                                      </div>
+                                               <script>
+                                                $(".lyrics").click(function(){
+
+                                                $.get( "http://10.1.1.142:8000"+$(this).attr('index'), function( data ) {
+
+                                                $("#lyricBody").html(data)
+                                                $("#myModal").modal("show")
+                                            });
+                                            })
+                                               </script>
+{% endblock %}
+
 
                                     </div>
                                 </td>
+
 
                                 <td>{{ song.lyricist }}</td>
                                 <td>
                                     <a href="{% url 'music:favorite' song.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if song.is_favorite %}active{% endif %}"></span></a>
                                 </td>
 
-                                <td>
-                                     <div class="container col-sm-4 col-md-3">
-                                      <!-- Trigger the modal with a button -->
-                                      <a http="{% url 'music:lyrics' song.id %}" data-toggle="modal" data-target="#myModala">Open Modal</a>
-
-                                      <!-- Modal -->
-                                      <div class="modal fade" id="myModala" role="dialog">
-                                        <div class="modal-dialog modal-lg">
-
-                                          <!-- Modal content-->
-                                          <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                  <h4 class="modal-title">Modal Header</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <p><a href="{% url 'music:lyrics' song.id %}"> a </a></p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                </div>
-                                          </div>
-
-                                        </div>
-                                      </div>
-
-                                    </div>
-                                </td>
 
 
                             </tr>
