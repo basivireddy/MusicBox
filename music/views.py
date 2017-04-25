@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .forms import AlbumForm, SongForm, UserForm, PlayListForm ,PlayListSongForm
-from .models import Album, Song, PlayList, PlayListSong
+from .models import Album, Song, PlayList, PlayListSong,Lyrics
 
 AUDIO_FILE_TYPES = ['wav', 'mp3', 'ogg']
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
@@ -315,4 +315,10 @@ def register(request):
     }
     return render(request, 'music/register.html', context)
 
+
+
+def lyrics(request,song_id):
+     lyricid = Lyrics.objects.filter(song_id=song_id,language_id=1)
+     lyric = get_object_or_404(Lyrics, pk=lyricid)
+     return HttpResponse(lyric.lyric)
 

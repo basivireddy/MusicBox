@@ -1,6 +1,12 @@
 {% extends 'music/base.html' %}
 {% block title %}{{ album }}{% endblock %}
 {% block albums_active %}active{% endblock %}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<style type="text/css">
+    .bs-example{
+    	margin: 20px;
+    }
+</style>
 
 {% block body %}
 <div class="container-fluid songs-container">
@@ -42,19 +48,23 @@
                         <p><strong>{{ error_message }}</strong></p>
                     {% endif %}
 
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>Title</th>
                             <th>Audio File</th>
+                            <th>Lyrics File</th>
+                            <th>lyrics</th>
+                            <th>Lyricist</th>
                             <th>Favorite</th>
-                            <th>Actions</th>
+
+
                         </tr>
                         </thead>
                         <tbody>
                         {% for song in album.song_set.all %}
                             <tr>
-                                <td>{{ song.song_title }}</td>
+                                <td>{{ song.song_title }} <a href="{% url 'music:lyrics' song.id %}"> a </a></td>
                                 <td>
                                     <a target="_blank" href="{{ song.audio_file.url }}">
                                         <button type="button" class="btn btn-success btn-xs">
@@ -63,20 +73,75 @@
                                     </a>
                                 </td>
                                 <td>
+                                    <a target="_blank" href="{{ song.lyrics_file.url }}">
+                                        <button type="button" class="btn btn-success btn-xs">
+                                            <span class="glyphicon glyphicon-music"></span>&nbsp; Lyrics
+                                        </button>
+                                    </a>
+                                </td>
+                                 <td>
+                                     <div class="container col-sm-4 col-md-3">
+                                      <!-- Trigger the modal with a button -->
+                                      <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModal">Open Modal</button>
+
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="myModal" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+
+                                          <!-- Modal content-->
+                                          <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                  <h4 class="modal-title">Modal Header</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p><a href="{% url 'music:lyrics' song.id %}"> a </a></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                </td>
+
+                                <td>{{ song.lyricist }}</td>
+                                <td>
                                     <a href="{% url 'music:favorite' song.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if song.is_favorite %}active{% endif %}"></span></a>
                                 </td>
+
                                 <td>
-                                    <form action="{% url 'music:delete_song' album.id song.id %}" method="post" style="display: inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="song_id" value="{{ song.id }}" />
-                                        <button type="submit" class="btn btn-danger btn-xs">
-                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
-                                        </button>
-                                    </form>
+                                     <div class="container col-sm-4 col-md-3">
+                                      <!-- Trigger the modal with a button -->
+                                      <a http="{% url 'music:lyrics' song.id %}" data-toggle="modal" data-target="#myModala">Open Modal</a>
+
+                                      <!-- Modal -->
+                                      <div class="modal fade" id="myModala" role="dialog">
+                                        <div class="modal-dialog modal-lg">
+
+                                          <!-- Modal content-->
+                                          <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                  <h4 class="modal-title">Modal Header</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p><a href="{% url 'music:lyrics' song.id %}"> a </a></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                </div>
+                                          </div>
+
+                                        </div>
+                                      </div>
+
+                                    </div>
                                 </td>
-                                <td>
-                                   <a href="{% url 'music:add_song_playlist' album.id %}">Add to PlayList</a>
-                                </td>
+
 
                             </tr>
                         {% endfor %}

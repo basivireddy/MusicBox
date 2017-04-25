@@ -16,6 +16,10 @@ class Song(models.Model):
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
     song_title = models.CharField(max_length=250)
     audio_file = models.FileField(default='')
+    lyricist = models.CharField(default='',max_length=250)
+    singers = models.CharField(default='',max_length=250)
+    lyrics_file = models.FileField(default='')
+    #lyric = models.TextField(max_length=1000,default='')
     is_favorite = models.BooleanField(default=False)
 
     def __str__(self):
@@ -37,4 +41,21 @@ class PlayListSong(models.Model):
 
     def __str__(self):
         return str(self.playlist) + ' - ' + str(self.song)
+
+
+class Language(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.name
+
+class Lyrics(models.Model):
+    song = models.ForeignKey(Song,on_delete=models.CASCADE)
+    language = models.ForeignKey(Language)
+    #language = models.CharField(max_length=1000)
+    lyric = models.TextField(max_length=1000)
+
+    def __str__(self):
+        return str(self.song) + ' - ' + str(self.language)
+
 
