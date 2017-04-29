@@ -9,6 +9,7 @@
 </style>
 
 {% block body %}
+
 <div class="container-fluid songs-container">
 
     <div class="row">
@@ -53,7 +54,7 @@
                         <tr>
                             <th>Title</th>
                             <th>Audio File</th>
-                            <th>Lyrics File</th>
+                          <!--  <th>Lyrics File</th> -->
                             <th>lyrics</th>
                             <th>Lyricist</th>
                             <th>Favorite</th>
@@ -62,10 +63,10 @@
                         </tr>
                         </thead>
 
-                         <!-- Modal -->
-                                         <!--model -->
-                                         <div class="modal fade" id="myModal" role="dialog">
-                                        <div class="modal-dialog modal-lg">
+
+                        <!-- lyric model -->
+                        <div class="modal fade" id="myModal" role="dialog">
+                            <div class="modal-dialog modal-lg">
 
                                           <!-- Modal content-->
                                           <div class="modal-content">
@@ -74,28 +75,32 @@
                                                   <h4 class="modal-title">Lyric</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                  <p id="lyricBody"></p>
+                                                  <p id="lyricBody"></p><p id="demo"></p>
                                                 </div>
                                                 <div class="modal-footer">
                                                   <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                                 </div>
                                           </div>
 
-                                        </div>
-                                      </div>
+                            </div>
+                        </div>
 
 
                         <tbody>
                         {% for song in album.song_set.all %}
                             <tr>
                                 <td>{{ song.song_title }} </td>
+
+
                                 <td>
+
                                     <a target="_blank" href="{{ song.audio_file.url }}">
                                         <button type="button" class="btn btn-success btn-xs">
                                             <span class="glyphicon glyphicon-play"></span>&nbsp; Play
                                         </button>
                                     </a>
                                 </td>
+                                  <!--
                                 <td>
                                     <a target="_blank" href="{{ song.lyrics_file.url }}">
                                         <button type="button" class="btn btn-success btn-xs">
@@ -103,25 +108,15 @@
                                         </button>
                                     </a>
                                 </td>
+
+                               -->
                                 <td>
                                      <div class="container col-sm-4 col-md-3">
                                       <!-- Trigger the modal with a button -->
 
 
-                                      <button type="button" class="btn btn-success btn-xs lyrics" index="{% url 'music:lyrics' song.id %}">Lyrics</button>
-                                          {% block javascript %}
+                                      <button type="button" class="btn btn-success btn-xs lyrics" index="{% url 'music:lyrics' song.id %}" musicfile="{{ song.audio_file.url }}">Lyrics</button>
 
-                                               <script>
-                                                $(".lyrics").click(function(){
-
-                                                $.get( "http://10.1.1.142:8000"+$(this).attr('index'), function( data ) {
-
-                                                $("#lyricBody").html(data)
-                                                $("#myModal").modal("show")
-                                            });
-                                            })
-                                               </script>
-{% endblock %}
 
 
                                     </div>
@@ -136,7 +131,30 @@
 
 
                             </tr>
+
                         {% endfor %}
+                        {% block javascript %}
+
+                                               <script>
+                                                $(".lyrics").click(function(){
+
+                                                   $.get( "http://10.1.1.142:8000"+$(this).attr('index'), function( data ) {
+
+                                                            $("#lyricBody").html(data)
+
+                                                           //document.getElementById("demo").innerHTML = '<html><body><audio controls><source src="http://10.1.1.142:8000'+${{"song.audio_file.url"}}+'/" type="audio/mpeg" /></audio></body></html>';
+                                                            document.getElementById("demo").innerHTML = '<html><body><audio controls><source src="http://10.1.1.142:8000'+'/media/01_-_Yaa_Yaa_www.AtoZmp3.in.mp3'+'/" type="audio/mpeg" /></audio></body></html>';
+
+                                                            $("#myModal").modal("show")
+                                                   });
+
+
+                                                 })
+
+
+
+                                               </script>
+                                          {% endblock %}
                         </tbody>
                     </table>
 
