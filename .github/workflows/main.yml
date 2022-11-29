@@ -50,7 +50,7 @@ jobs:
       - name: docker build
         run: |
             export DOCKER_BUILDKIT=1
-            DOCKER_BUILDKIT=1 docker build -t MusicBox:1.0 --build-arg BUILDKIT_INLINE_CACHE=1 \
+            DOCKER_BUILDKIT=1 docker build --tag MusicBox:1.0 --build-arg BUILDKIT_INLINE_CACHE=1 \
             --progress=plain -f Conatinerfile .
 
 
