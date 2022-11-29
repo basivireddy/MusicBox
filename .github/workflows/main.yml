@@ -44,7 +44,10 @@ jobs:
       - name: Install dependecy
         run: |
            echo "dep"
+           pwd
+           echo "${{ env.pythonLocation }}"
            pip install -r requirements.txt
+           
            
            
       - name: docker build
