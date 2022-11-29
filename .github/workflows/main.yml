@@ -51,7 +51,7 @@ jobs:
         run: |
             export DOCKER_BUILDKIT=1
             DOCKER_BUILDKIT=1 docker build --tag musicbox:1.0 --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --progress=plain -f Conatinerfile .
+            --progress=plain --build-contexts pip_cache=${{ env.pythonLocation }} -f Conatinerfile .
 
 
 
