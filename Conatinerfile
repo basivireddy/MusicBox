@@ -5,7 +5,6 @@ WORKDIR /code
 ADD requirements.txt /code/
 #RUN pip install -r requirements.txt
 RUN  --mount=type=cache,target=/root/.cache/pip \
-    ls -alg /root/.cache/pip \
     pip install -r requirements.txt
 
 ADD . /code/
