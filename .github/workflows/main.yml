@@ -41,14 +41,14 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: ${{ env.pythonLocation }}
           
-       - name: Install dependecy
-         run: |
+      - name: Install dependecy
+        run: |
            echo "dep"
            pip install -r requirements.txt
            
            
-        - name: docker build
-          run: |
+      - name: docker build
+        run: |
             export DOCKER_BUILDKIT=1
             DOCKER_BUILDKIT=1 docker build -t MusicBox:1.0 --build-arg BUILDKIT_INLINE_CACHE=1 \
             --progress=plain -f Conatinerfile .
