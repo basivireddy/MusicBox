@@ -6,6 +6,10 @@ ADD requirements.txt /code/
 #RUN pip install -r requirements.txt
 RUN  --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements.txt
+    
+RUN pwd
+RUN ls -alg /root/.cache/pip
+RUN pip list -v
 
 ADD . /code/
 EXPOSE 8000
